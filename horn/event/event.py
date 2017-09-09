@@ -1,6 +1,15 @@
+from enum import Enum
 from gi.repository import GLib
 from abc import ABC, abstractmethod
 import threading
+
+
+class Event(Enum):
+    play = 0
+    pause = 1
+    stop = 2
+    next = 3
+    progress = 4
 
 
 class EventProducer(object):

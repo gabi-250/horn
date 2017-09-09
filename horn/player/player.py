@@ -1,13 +1,11 @@
 from gi.repository import Gst
 from .track import Track
 from .playerthread import PlayerThread
-from horn.observable.observable import Observable
-
-PLAY_EVENT, PAUSE_EVENT, STOP_EVENT,\
-            NEXT_EVENT, SLIDER_EVENT = [index for index in range(5)]
+from horn.event.event import EventProducer
+from horn.event.event import Event
 
 
-class Player(Observable):
+class Player(EventProducer):
     """
     This is a singleton class that provides ways of manipulating the playback
     of multiple files.
@@ -31,7 +29,7 @@ class Player(Observable):
         :param song_list: the file paths to be added to the playlist
         :type song_list: list
         """
-        Observable.__init__(self)
+        EventProducer.__init__(self)
         if Player._instance is None:
             Player._instance = self
 
@@ -89,7 +87,7 @@ class Player(Observable):
         :type path: str
         """
         if len(self.track_list):
-            self.notify_observers(PLAY_EVENT)
+            self.send_event(Event.play)
             media_uri = 'file://' + self.current_track.file_path
             if path:
                 self.playbin.set_state(Gst.State.READY)
@@ -108,14 +106,14 @@ class Player(Observable):
         Stop the player, if it is playing.
         """
         self.playbin.set_state(Gst.State.READY)
-        self.notify_observers(STOP_EVENT)
+        self.send_event(Event.stop)
 
     def pause(self):
         """
         Pause the player, if it is playing.
         """
         self.playbin.set_state(Gst.State.PAUSED)
-        self.notify_observers(PAUSE_EVENT)
+        self.send_event(Event.pause)
 
     def is_playing(self):
         """
@@ -158,7 +156,7 @@ class Player(Observable):
         Play the next media in the playlist.
         """
         if len(self.track_list):
-            self.notify_observers(NEXT_EVENT)
+            self.send_event(Event.next)
             self.stop()
             self.current_track = self._get_next_media()
             self.play()
@@ -168,7 +166,7 @@ class Player(Observable):
         Play the previous media in the playlist.
         """
         if len(self.track_list):
-            self.notify_observers(NEXT_EVENT)
+            self.send_event(Event.next)
             self.stop()
             self.current_track = self._get_prev_media()
             self.play()
@@ -199,7 +197,7 @@ class Player(Observable):
                               offset,
                               Gst.SeekType.SET,
                               -1)
-            self.notify_observers(PLAY_EVENT)
+            self.send_event(Event.play)
 
     def get_song_duration(self):
         """
@@ -271,9 +269,6 @@ class Player(Observable):
         :returns: int -- the number of seconds
         """
         return self.playbin.query_position(Gst.Format.TIME)[1] / Gst.SECOND
-
-    def notify_observers(self, event_type):
-        Observable.notify_observers(self, event_type)
 
     def increase_playback_speed(self):
         """

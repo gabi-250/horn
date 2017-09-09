@@ -17,7 +17,7 @@ class PlayerThread(Thread):
 
     def run(self):
         from .player import Player
-        from . import player as event
+        from .horn.event.event import Event
         while self.keep_running:
             player = Player.instance()
             pos = player.get_current_second()
@@ -27,7 +27,7 @@ class PlayerThread(Thread):
                 player.play_next()
             else:
                 time.sleep(0.1)
-                player.notify_observers(event.SLIDER_EVENT)
+                player.send_event(Event.progress)
 
     @property
     def keep_running(self):
