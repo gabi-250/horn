@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 
 import argparse
+import sys
+from horn.gui.mainwindow import run
 
 
 def main(args):
-    pass
+    run(args)
 
 
 if __name__ == '__main__':
@@ -13,4 +15,4 @@ if __name__ == '__main__':
                         help='the list of tracks to play',
                         default=[], nargs='+')
     args = parser.parse_args()
-    main(args=args.track_list)
+    sys.exit(main(args=args.track_list))
