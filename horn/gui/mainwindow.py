@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import curses
 from curses import wrapper
 from horn.player.player import Player
+from .listwindow import ListWindow
 from horn.event.event import EventObserver
 import time
 import os
@@ -26,6 +28,7 @@ def print_playlist(stdscr, args):
             stdscr.addstr('\nPaused')
         else:
             stdscr.addstr('\nStopped')
+        stdscr.refresh()
     else:
         print_help(stdscr)
 
@@ -41,6 +44,8 @@ def print_help(stdscr):
 
 def main(stdscr, playlist):
     player = Player(list(set(playlist)))
+    win = curses.newwin(50, 50, 5, 5)
+    list_win = ListWindow(win)
     if playlist:
         player.instance().play()
     while True:
@@ -51,9 +56,11 @@ def main(stdscr, playlist):
         elif input_char == 'n':
             Player.instance().play_next()
         elif input_char == 'p':
-            Player.instance().play()
-        elif input_char == 'P':
-            Player.instance().pause()
+            player = Player.instance()
+            if player.is_playing():
+                player.pause()
+            else:
+                player.play()
         elif len(input_char) and input_char[0] == 'a':
             tracks = input_char.split(' ')[1:]
             for track in tracks:
@@ -67,6 +74,7 @@ def main(stdscr, playlist):
             stdscr.clear()
             stdscr.addstr('Unknown command %s' % input_char)
             stdscr.refresh()
+        list_win.refresh()
         time.sleep(1)
 
 

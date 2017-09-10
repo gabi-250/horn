@@ -3,16 +3,19 @@
 from horn.player.player import Player
 from horn.event.event import EventObserver
 from horn.tools.timeformatter import hms_format
-from .tools.iconhelp import get_name
 
 
 class ListWindow(EventObserver):
-    def __init__(self):
+    def __init__(self, win):
         EventObserver.__init__(self)
         Player.instance().add_observer(self)
+        self._win = win
+        self._create_playlist()
 
     def _create_playlist(self):
-        pass
+        for idx, track in enumerate(Player.instance().track_list):
+            self._win.addstr(idx + 1, 0, track.file_path)
+        self._win.refresh()
 
     def _add_track(self, widget):
         pass
@@ -25,9 +28,12 @@ class ListWindow(EventObserver):
         pass
 
     def update(self, event, event_type):
-        from horn.player import player as event
-        if event_type == event.PLAY_EVENT or event_type == event.NEXT_EVENT:
+        from horn.event.event import Event
+        if event_type == Event.play or event_type == Event.next:
             player = Player.instance()
             row = self.playlist.get_row_at_index(player.curr_track_index)
             self.playlist.select_row(row)
         return False
+
+    def refresh(self):
+        self._win.refresh()
