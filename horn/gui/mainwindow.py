@@ -2,39 +2,30 @@
 
 import curses
 from curses import wrapper
+from curses.textpad import Textbox
 from horn.player.player import Player
 from .listwindow import ListWindow
-from horn.event.event import EventObserver
 import time
-import os
 
 
 def print_playlist(stdscr, args):
-    stdscr.clear()
+    # stdscr.clear()
     if args:
         if not Player.instance().current_track:
             Player.instance().play()
-        stdscr.addstr(0, 0, 'Type "h" for help.\nYour playlist is:')
-        for index, arg in enumerate(args):
-            filename = os.path.basename(arg)
-            track_path = Player.instance().current_track.file_path
-            if filename == os.path.basename(track_path):
-                stdscr.addstr(index + 1, 0, ('{:<8}{:}'.format('*', filename)))
-            else:
-                stdscr.addstr(index + 1, 0, ('{:<8}{:}'.format('', filename)))
+        stdscr.addstr(0, 0, 'Type "h" for help.')
         if Player.instance().is_playing():
             stdscr.addstr('\nPlaying')
         elif Player.instance().is_paused:
             stdscr.addstr('\nPaused')
         else:
             stdscr.addstr('\nStopped')
-        stdscr.refresh()
     else:
         print_help(stdscr)
 
 
 def print_help(stdscr):
-    stdscr.clear()
+    # stdscr.clear()
     stdscr.addstr(0, 0, "Type 'a' to enter append mode")
     stdscr.addstr(1, 0, "Type 'n' to play the next track")
     stdscr.addstr(2, 0, "Type 'p' to play and 'P' to pause")
@@ -48,8 +39,11 @@ def main(stdscr, playlist):
     list_win = ListWindow(win)
     if playlist:
         player.instance().play()
+
     while True:
         print_playlist(stdscr, playlist)
+        stdscr.refresh()
+        list_win.draw()
         input_char = stdscr.getkey()
         if input_char == 'h':
             print_help(stdscr)
@@ -61,20 +55,20 @@ def main(stdscr, playlist):
                 player.pause()
             else:
                 player.play()
-        elif len(input_char) and input_char[0] == 'a':
-            tracks = input_char.split(' ')[1:]
-            for track in tracks:
-                Player.instance().add(track)
-                playlist.append(track)
-            print_playlist(playlist)
+        elif input_char == 'a':
+            text_box = Textbox(stdscr)
+            text_box.edit()
+            file_names = text_box.gather().split(' ')
+            stdscr.addstr(7, 0, file_names[0])
+            stdscr.refresh()
+            time.sleep(15)
+            for file_name in file_names:
+                Player.instance().add(file_name)
         elif input_char == 'q':
             Player.instance().stop()
             break
         else:
-            stdscr.clear()
             stdscr.addstr('Unknown command %s' % input_char)
-            stdscr.refresh()
-        list_win.refresh()
         time.sleep(1)
 
 

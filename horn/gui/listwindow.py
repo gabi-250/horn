@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from horn.player.player import Player
 from horn.event.event import EventObserver
 from horn.tools.timeformatter import hms_format
@@ -10,11 +11,18 @@ class ListWindow(EventObserver):
         EventObserver.__init__(self)
         Player.instance().add_observer(self)
         self._win = win
-        self._create_playlist()
+        self.draw()
 
-    def _create_playlist(self):
-        for idx, track in enumerate(Player.instance().track_list):
-            self._win.addstr(idx + 1, 0, track.file_path)
+    def draw(self):
+        for index, arg in enumerate(Player.instance().track_list):
+            filename = os.path.basename(arg.file_path)
+            track_path = Player.instance().current_track.file_path
+            if filename == os.path.basename(track_path):
+                self._win.addstr(index + 1, 0,
+                                 ('{:<8}{:}'.format('*', filename)))
+            else:
+                self._win.addstr(index + 1, 0,
+                                 ('{:<8}{:}'.format('', filename)))
         self._win.refresh()
 
     def _add_track(self, widget):
@@ -34,6 +42,3 @@ class ListWindow(EventObserver):
             row = self.playlist.get_row_at_index(player.curr_track_index)
             self.playlist.select_row(row)
         return False
-
-    def refresh(self):
-        self._win.refresh()
