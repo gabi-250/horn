@@ -59,7 +59,6 @@ class Track(object):
         :getter: Return this track's file path.
         :type: str
         """
-
         return self._file_path
 
     @property

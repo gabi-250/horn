@@ -25,7 +25,6 @@ def print_playlist(stdscr, args):
 
 
 def print_help(stdscr):
-    # stdscr.clear()
     stdscr.addstr(0, 0, "Type 'a' to enter append mode")
     stdscr.addstr(1, 0, "Type 'n' to play the next track")
     stdscr.addstr(2, 0, "Type 'p' to play and 'P' to pause")
@@ -35,7 +34,8 @@ def print_help(stdscr):
 
 def main(stdscr, playlist):
     player = Player(list(set(playlist)))
-    win = curses.newwin(50, 50, 5, 5)
+    std_max_y, std_max_x = stdscr.getmaxyx()
+    win = stdscr.derwin(std_max_y, int(0.5 * std_max_x), 0, std_max_x // 2)
     list_win = ListWindow(win)
     input_win = curses.newwin(20, 20, 10, 0)
     if playlist:
@@ -45,18 +45,18 @@ def main(stdscr, playlist):
         print_playlist(stdscr, playlist)
         stdscr.refresh()
         list_win.draw()
-        input_char = stdscr.getkey()
-        if input_char == 'h':
+        input_char = stdscr.getch()
+        if input_char == ord('h'):
             print_help(stdscr)
-        elif input_char == 'n':
+        elif input_char == ord('n'):
             Player.instance().play_next()
-        elif input_char == 'p':
+        elif input_char == ord('p'):
             player = Player.instance()
             if player.is_playing():
                 player.pause()
             else:
                 player.play()
-        elif input_char == 'a':
+        elif input_char == ord('a'):
             text_box = Textbox(input_win)
             input_win.clear()
             rectangle(input_win, 0, 0, 18, 18)
@@ -65,9 +65,15 @@ def main(stdscr, playlist):
             input_win.clear()
             for file_name in file_names:
                 Player.instance().add(file_name)
-        elif input_char == 'q':
+        elif input_char == ord('q'):
             Player.instance().exit()
             break
+        elif input_char == curses.KEY_RESIZE:
+            # resize all inner windows
+            win.erase()
+            std_max_y, std_max_x = stdscr.getmaxyx()
+            win.mvderwin(0, std_max_x // 2)
+            win.resize(std_max_y, std_max_x // 2)
         else:
             stdscr.addstr('Unknown command %s' % input_char)
         time.sleep(1)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import curses
 from horn.player.player import Player
 from horn.event.event import EventObserver
 from horn.tools.timeformatter import hms_format
@@ -14,15 +15,13 @@ class ListWindow(EventObserver):
         self.draw()
 
     def draw(self):
-        for index, arg in enumerate(Player.instance().track_list):
-            filename = os.path.basename(arg.file_path)
+        for index, track in enumerate(Player.instance().track_list):
+            filename = os.path.basename(track.file_path)
             track_path = Player.instance().current_track.file_path
             if filename == os.path.basename(track_path):
-                self._win.addstr(index + 1, 0,
-                                 ('{:<8}{:}'.format('*', filename)))
+                self._win.addstr(index + 1, 0, track.name, curses.A_REVERSE)
             else:
-                self._win.addstr(index + 1, 0,
-                                 ('{:<8}{:}'.format('', filename)))
+                self._win.addstr(index + 1, 0, track.name, curses.A_NORMAL)
         self._win.refresh()
 
     def _add_track(self, widget):
