@@ -101,6 +101,11 @@ class Player(EventProducer):
             if not self.player_thread.isAlive():
                 self.player_thread.start()
 
+    def exit(self):
+        self.stop()
+        self.player_thread.keep_running = False
+        self.player_thread.join()
+
     def stop(self):
         """
         Stop the player, if it is playing.

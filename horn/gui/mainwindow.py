@@ -2,7 +2,7 @@
 
 import curses
 from curses import wrapper
-from curses.textpad import Textbox
+from curses.textpad import Textbox, rectangle
 from horn.player.player import Player
 from .listwindow import ListWindow
 import time
@@ -37,6 +37,7 @@ def main(stdscr, playlist):
     player = Player(list(set(playlist)))
     win = curses.newwin(50, 50, 5, 5)
     list_win = ListWindow(win)
+    input_win = curses.newwin(20, 20, 10, 0)
     if playlist:
         player.instance().play()
 
@@ -56,16 +57,16 @@ def main(stdscr, playlist):
             else:
                 player.play()
         elif input_char == 'a':
-            text_box = Textbox(stdscr)
+            text_box = Textbox(input_win)
+            input_win.clear()
+            rectangle(input_win, 0, 0, 18, 18)
             text_box.edit()
             file_names = text_box.gather().split(' ')
-            stdscr.addstr(7, 0, file_names[0])
-            stdscr.refresh()
-            time.sleep(15)
+            input_win.clear()
             for file_name in file_names:
                 Player.instance().add(file_name)
         elif input_char == 'q':
-            Player.instance().stop()
+            Player.instance().exit()
             break
         else:
             stdscr.addstr('Unknown command %s' % input_char)
