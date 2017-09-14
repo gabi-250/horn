@@ -2,26 +2,11 @@
 
 import curses
 from curses import wrapper
-from curses.textpad import Textbox, rectangle
 from horn.player.player import Player
 from .listwindow import ListWindow
+from .inputwindow import InputWindow
+from .statuswindow import StatusWindow
 import time
-
-
-def print_playlist(stdscr, args):
-    # stdscr.clear()
-    if args:
-        if not Player.instance().current_track:
-            Player.instance().play()
-        stdscr.addstr(0, 0, 'Type "h" for help.')
-        if Player.instance().is_playing():
-            stdscr.addstr('\nPlaying')
-        elif Player.instance().is_paused:
-            stdscr.addstr('\nPaused')
-        else:
-            stdscr.addstr('\nStopped')
-    else:
-        print_help(stdscr)
 
 
 def print_help(stdscr):
@@ -33,18 +18,21 @@ def print_help(stdscr):
 
 
 def main(stdscr, playlist):
+    stdscr.nodelay(1)
     player = Player(list(set(playlist)))
     std_max_y, std_max_x = stdscr.getmaxyx()
     win = stdscr.derwin(std_max_y, int(0.5 * std_max_x), 0, std_max_x // 2)
     list_win = ListWindow(win)
-    input_win = curses.newwin(20, 20, 10, 0)
+    status_win = StatusWindow(curses.newwin(1, stdscr.getmaxyx()[1],
+                                            stdscr.getmaxyx()[0] - 2, 0))
+    input_win = InputWindow(curses.newwin(1, stdscr.getmaxyx()[1],
+                                          stdscr.getmaxyx()[0] - 1, 0))
     if playlist:
         player.instance().play()
-
     while True:
-        print_playlist(stdscr, playlist)
         stdscr.refresh()
         list_win.draw()
+        status_win.draw()
         input_char = stdscr.getch()
         if input_char == ord('h'):
             print_help(stdscr)
@@ -57,14 +45,7 @@ def main(stdscr, playlist):
             else:
                 player.play()
         elif input_char == ord('a'):
-            text_box = Textbox(input_win)
-            input_win.clear()
-            rectangle(input_win, 0, 0, 18, 18)
-            text_box.edit()
-            file_names = text_box.gather().split(' ')
-            input_win.clear()
-            for file_name in file_names:
-                Player.instance().add(file_name)
+            input_win.edit()
         elif input_char == ord('q'):
             Player.instance().exit()
             break
@@ -74,9 +55,9 @@ def main(stdscr, playlist):
             std_max_y, std_max_x = stdscr.getmaxyx()
             win.mvderwin(0, std_max_x // 2)
             win.resize(std_max_y, std_max_x // 2)
-        else:
+        elif input_char != -1:
             stdscr.addstr('Unknown command %s' % input_char)
-        time.sleep(1)
+        time.sleep(0.1)
 
 
 def run(args):
