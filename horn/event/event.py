@@ -1,5 +1,4 @@
 from enum import Enum
-from gi.repository import GLib
 from abc import ABC, abstractmethod
 import threading
 
@@ -20,14 +19,15 @@ class EventProducer(object):
     def add_observer(self, observer):
         self._observers.append(observer)
 
-    def send_event(self, info):
+    def send_event(self, event):
         for obs in self._observers:
-            event = threading.Event()
-            GLib.idle_add(obs.update, event, info)
+            obs.update(event)
 
 
 class EventObserver(ABC):
+    def __init__(self, event_producer):
+        event_producer.add_observer(self)
 
     @abstractmethod
-    def update(self, event, info):
-        return False
+    def update(self, event):
+        pass

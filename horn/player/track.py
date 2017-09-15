@@ -29,7 +29,7 @@ class Track(object):
         if tags.get_string(Gst.TAG_TITLE)[0]:
             self._metadata['title'] = tags.get_string(Gst.TAG_TITLE)[1]
         else:
-            self._metadata['title'] = 'untitled'
+            self._metadata['title'] = os.path.basename(self._file_path)
         if tags.get_sample(Gst.TAG_IMAGE)[0]:
             self._metadata['image'] = tags.get_sample(Gst.TAG_IMAGE)[1]
         else:
@@ -44,9 +44,9 @@ class Track(object):
     @property
     def name(self):
         """
-        The name of this track.
+        The title of this track if it has one, otherwise the name of the file.
 
-        :getter: Return this track's name.
+        :getter: Return this track's title.
         :type: str
         """
         return self._metadata['title']

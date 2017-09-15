@@ -18,7 +18,7 @@ class Player(EventProducer):
     """
     _instance = None
 
-    def __init__(self, song_list=[]):
+    def __init__(self, media_paths=None):
         """
         Create a player which will contain a list of media that will be
         playable.
@@ -26,8 +26,8 @@ class Player(EventProducer):
         :note: Use the instance method instead of instantiating a player
                directly.
 
-        :param song_list: the file paths to be added to the playlist
-        :type song_list: list
+        :param media_paths: the file paths to be added to the playlist
+        :type media_paths: list
         """
         EventProducer.__init__(self)
         if Player._instance is None:
@@ -35,7 +35,7 @@ class Player(EventProducer):
 
         self._shuffle = False
         self.track_list = []
-        for song in song_list:
+        for song in media_paths:
             try:
                 self.track_list.append(Track(song))
             except:
