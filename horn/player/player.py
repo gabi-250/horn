@@ -242,7 +242,12 @@ class Player(EventProducer):
         else:
             return None
 
-    def set_volume(self, volume):
+    @property
+    def volume(self):
+        return self.playbin.get_property("volume")
+
+    @volume.setter
+    def volume(self, volume):
         """
         Set the playback volume.
 
