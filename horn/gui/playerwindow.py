@@ -8,7 +8,7 @@ class PlayerWindow(ABC):
         self._dirty = True
 
     def touch(self):
-       self._dirty = True
+        self._dirty = True
 
     def redraw(self):
         if self._dirty:
@@ -19,6 +19,6 @@ class PlayerWindow(ABC):
     def draw(self):
         self._win.clear()
 
-   # @abstractmethod
+    # @abstractmethod
     def resize(self, y, x, height, width):
         pass

@@ -29,22 +29,32 @@ class MainWindow(PlayerWindow):
 
     def main_loop(self):
         while True:
+            player = Player.instance()
             self.draw()
             input_char = self._win.getch()
             if input_char == ord('h'):
                 self.print_help()
             elif input_char == ord('n'):
-                Player.instance().play_next()
+                player.play_next()
             elif input_char == ord('p'):
-                player = Player.instance()
                 if player.is_playing():
                     player.pause()
                 else:
                     player.play()
+            elif input_char == ord('+'):
+                volume = player.volume + 0.1
+                if volume >= 1.0:
+                    volume = 1.0
+                player.volume = volume
+            elif input_char == ord('-'):
+                volume = player.volume - 0.1
+                if volume >= 1.0:
+                    volume = 1.0
+                player.volume = volume
             elif input_char == ord('a'):
                 self.input_win.edit()
             elif input_char == ord('q'):
-                Player.instance().exit()
+                player.exit()
                 break
             elif input_char == curses.KEY_RESIZE:
                 # resize all inner windows
