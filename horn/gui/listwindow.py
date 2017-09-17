@@ -2,7 +2,6 @@ import os
 import curses
 from horn.player.player import Player
 from horn.event.event import EventObserver
-from horn.tools.timeformatter import hms_format
 from horn.gui.playerwindow import PlayerWindow
 
 
@@ -27,6 +26,6 @@ class ListWindow(PlayerWindow, EventObserver):
 
     def update(self, event):
         from horn.event.event import Event
-        if event == Event.play or event == Event.next:
+        if event == Event.play or event == Event.next or \
+                event == Event.new:
             self._dirty = True
-

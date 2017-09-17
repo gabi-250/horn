@@ -269,6 +269,7 @@ class Player(EventProducer):
         """
         if track_path not in [track.file_path for track in self.track_list]:
             self.track_list.append(Track(track_path))
+            self.send_event(Event.new)
             return True
         return False
 

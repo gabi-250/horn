@@ -9,6 +9,7 @@ class Event(Enum):
     stop = 2
     next = 3
     progress = 4
+    new = 5
 
 
 class EventProducer(object):
