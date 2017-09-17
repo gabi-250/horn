@@ -3,6 +3,7 @@ from horn.player.player import Player
 from horn.event.event import Event
 from horn.tools.timeformatter import hms_format
 from horn.gui.playerwindow import PlayerWindow
+import curses
 
 
 class StatusWindow(PlayerWindow, EventObserver):
@@ -28,7 +29,10 @@ class StatusWindow(PlayerWindow, EventObserver):
             progress=hms_format(player.get_current_second()),
             duration=hms_format(player.get_song_duration()),
             volume=str(int(round(player.volume, 2) * 100)))
-        self._win.addstr(0, 0, to_display)
+        try:
+            self._win.addstr(0, 0, to_display);
+        except curses.error:
+            pass
         self._win.refresh()
 
     def update(self, event):

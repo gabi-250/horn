@@ -15,11 +15,11 @@ class MainWindow(PlayerWindow):
         PlayerWindow.__init__(self, win)
         win.nodelay(1)
         max_y, max_x = win.getmaxyx()
-        self.list_win = ListWindow(win.derwin(max_y, max_x // 2,
+        self.list_win = ListWindow(curses.newwin(max_y, max_x // 2,
                                               0, max_x // 2))
-        self.status_win = StatusWindow(win.derwin(1, max_x,
+        self.status_win = StatusWindow(curses.newwin(1, max_x,
                                                   max_y - 2, 0))
-        self.input_win = InputWindow(win.derwin(1, max_x,
+        self.input_win = InputWindow(curses.newwin(1, max_x,
                                                 max_y - 1, 0))
 
     def draw(self):
@@ -58,9 +58,11 @@ class MainWindow(PlayerWindow):
                 break
             elif input_char == curses.KEY_RESIZE:
                 # resize all inner windows
-                std_max_y, std_max_x = self._win.getmaxyx()
-                self.list_win.resize(0, std_max_x // 2,
-                                     std_max_y, std_max_x // 2)
+                self._win.clear()
+                max_y, max_x = self._win.getmaxyx()
+                self.list_win.resize(0, max_x // 2,
+                                     max_y, max_x // 2)
+                self.status_win.resize(max_y - 2, 0, 1, max_x)
             elif input_char != -1:
                 self._win.addstr('Unknown command %s' % input_char)
             time.sleep(0.1)
