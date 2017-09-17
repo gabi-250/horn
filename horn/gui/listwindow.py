@@ -29,3 +29,10 @@ class ListWindow(PlayerWindow, EventObserver):
         if event == Event.play or event == Event.next or \
                 event == Event.new:
             self._dirty = True
+
+    def resize(self, y, x, height, width):
+        self._win.clear()
+        self._win.refresh()
+        self._win.resize(height, width)
+        self._win.mvwin(y, x)
+        self._dirty = True

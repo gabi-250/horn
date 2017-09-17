@@ -58,10 +58,9 @@ class MainWindow(PlayerWindow):
                 break
             elif input_char == curses.KEY_RESIZE:
                 # resize all inner windows
-                # self.playlist_win.win.erase()
                 std_max_y, std_max_x = self._win.getmaxyx()
-                # self.playlist_win.win.mvderwin(0, std_max_x // 2)
-                # self.playlist_win.win.resize(std_max_y, std_max_x // 2)
+                self.list_win.resize(0, std_max_x // 2,
+                                     std_max_y, std_max_x // 2)
             elif input_char != -1:
                 self._win.addstr('Unknown command %s' % input_char)
             time.sleep(0.1)
