@@ -11,6 +11,7 @@ import time
 class MainWindow(PlayerWindow):
 
     def __init__(self, win):
+        curses.use_default_colors()
         PlayerWindow.__init__(self, win)
         win.nodelay(1)
         max_y, max_x = win.getmaxyx()
