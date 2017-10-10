@@ -15,17 +15,15 @@ class MainWindow(PlayerWindow):
         PlayerWindow.__init__(self, win)
         win.nodelay(1)
         max_y, max_x = win.getmaxyx()
-        self.list_win = ListWindow(curses.newwin(max_y, max_x // 2,
-                                              0, max_x // 2))
-        self.status_win = StatusWindow(curses.newwin(1, max_x,
-                                                  max_y - 2, 0))
-        self.input_win = InputWindow(curses.newwin(1, max_x,
-                                                max_y - 1, 0))
+        self.list_win = ListWindow(curses.newpad(100, 100),
+                                   0, max_x // 2, max_y, max_x)
+        self.status_win = StatusWindow(curses.newwin(1, max_x, max_y - 2, 0))
+        self.input_win = InputWindow(curses.newwin(1, max_x, max_y - 1, 0))
 
     def draw(self):
         self._win.refresh()
-        self.list_win.redraw()
         self.status_win.redraw()
+        self.list_win.redraw()
 
     def main_loop(self):
         while True:
@@ -76,7 +74,8 @@ class MainWindow(PlayerWindow):
 
 
 def main(stdscr, playlist):
-    player = Player(list(set(playlist)))
+    # player = Player(list(set(playlist)))
+    player = Player(playlist)
     player.instance().play()
     main_window = MainWindow(stdscr)
     main_window.main_loop()

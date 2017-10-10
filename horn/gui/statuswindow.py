@@ -30,7 +30,7 @@ class StatusWindow(PlayerWindow, EventObserver):
             duration=hms_format(player.get_song_duration()),
             volume=str(int(round(player.volume, 2) * 100)))
         try:
-            self._win.addstr(0, 0, to_display);
+            self._win.addstr(0, 0, to_display)
         except curses.error:
             pass
         self._win.refresh()

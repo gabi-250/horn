@@ -1,20 +1,14 @@
-from abc import ABC, abstractmethod
+from horn.gui.widget import Widget
+import abc
 import curses
 
 
-class PlayerWindow(ABC):
+class PlayerWindow(Widget):
+    __metaclass__ = abc.ABCMeta
 
     def __init__(self, win):
+        Widget.__init__(self)
         self._win = win
-        self._dirty = True
-
-    def touch(self):
-        self._dirty = True
-
-    def redraw(self):
-        if self._dirty:
-            self.draw()
-            self._dirty = False
 
     def resize(self, y, x, height, width):
         try:
@@ -26,7 +20,3 @@ class PlayerWindow(ABC):
             # ignore curses errors for now
             pass
         self._dirty = True
-
-    @abstractmethod
-    def draw(self):
-        self._win.clear()
