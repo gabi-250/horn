@@ -5,6 +5,7 @@ from .listwindow import ListWindow
 from .inputwindow import InputWindow
 from .statuswindow import StatusWindow
 from .playerwindow import PlayerWindow
+from .infowindow import InfoWindow
 import time
 
 
@@ -17,13 +18,15 @@ class MainWindow(PlayerWindow):
         max_y, max_x = win.getmaxyx()
         # max_y - 2 because the list should not overlap with the control bar
         self.list_win = ListWindow(curses.newpad(100, 100),
-                                   0, max_x // 2, max_y - 2, max_x)
+                                   1, max_x // 2, max_y - 2, max_x)
         self.status_win = StatusWindow(curses.newwin(1, max_x, max_y - 2, 0))
+        self.info_win = InfoWindow(curses.newwin(1, max_x, 0, 0))
         self.input_win = InputWindow(curses.newwin(1, max_x, max_y - 1, 0))
 
     def draw(self):
         self._win.refresh()
         self.status_win.redraw()
+        self.info_win.redraw()
         self.list_win.redraw()
 
     def main_loop(self):
@@ -59,9 +62,10 @@ class MainWindow(PlayerWindow):
                 # resize all inner windows
                 self._win.clear()
                 max_y, max_x = self._win.getmaxyx()
-                self.list_win.resize(0, max_x // 2,
+                self.list_win.resize(1, max_x // 2,
                                      max_y - 2, max_x // 2)
                 self.status_win.resize(max_y - 2, 0, 1, max_x)
+                self.info_win.resize(0, 0, 1, max_x)
             elif input_char != -1:
                 self._win.addstr('Unknown command %s' % input_char)
             time.sleep(0.1)
@@ -75,8 +79,7 @@ class MainWindow(PlayerWindow):
 
 
 def main(stdscr, playlist):
-    # player = Player(list(set(playlist)))
-    player = Player(playlist)
+    player = Player(list(set(playlist)))
     player.instance().play()
     main_window = MainWindow(stdscr)
     main_window.main_loop()

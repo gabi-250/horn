@@ -20,10 +20,10 @@ class ListWindow(Widget, EventObserver):
             filename = os.path.basename(track.file_path)
             track_path = Player.instance().current_track.file_path
             if filename == os.path.basename(track_path):
-                self._pad.addstr(index + 1, 0, track.name, curses.A_REVERSE)
+                self._pad.addstr(index, 0, track.name, curses.A_REVERSE)
                 selected_index = index
             else:
-                self._pad.addstr(index + 1, 0, track.name, curses.A_NORMAL)
+                self._pad.addstr(index, 0, track.name, curses.A_NORMAL)
         diff = selected_index - (self._end_y - 1) // 2
         start_row = 0 if diff < 0 else diff
         try:
