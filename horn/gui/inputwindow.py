@@ -19,4 +19,4 @@ class InputWindow(PlayerWindow):
         file_names = self._text_box.gather().split()
         self.draw()
         for file_name in file_names:
-                Player.instance().add(file_name)
+            Player.instance().add(file_name)

@@ -15,8 +15,9 @@ class MainWindow(PlayerWindow):
         PlayerWindow.__init__(self, win)
         win.nodelay(1)
         max_y, max_x = win.getmaxyx()
+        # max_y - 2 because the list should not overlap with the control bar
         self.list_win = ListWindow(curses.newpad(100, 100),
-                                   0, max_x // 2, max_y, max_x)
+                                   0, max_x // 2, max_y - 2, max_x)
         self.status_win = StatusWindow(curses.newwin(1, max_x, max_y - 2, 0))
         self.input_win = InputWindow(curses.newwin(1, max_x, max_y - 1, 0))
 
@@ -59,7 +60,7 @@ class MainWindow(PlayerWindow):
                 self._win.clear()
                 max_y, max_x = self._win.getmaxyx()
                 self.list_win.resize(0, max_x // 2,
-                                     max_y, max_x // 2)
+                                     max_y - 2, max_x // 2)
                 self.status_win.resize(max_y - 2, 0, 1, max_x)
             elif input_char != -1:
                 self._win.addstr('Unknown command %s' % input_char)

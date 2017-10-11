@@ -23,8 +23,15 @@ class ListWindow(Widget, EventObserver):
                 self._pad.addstr(index + 1, 0, track.name, curses.A_REVERSE)
             else:
                 self._pad.addstr(index + 1, 0, track.name, curses.A_NORMAL)
-        self._pad.refresh(0, 0, self._begin_y, self._begin_x,
-                          self._end_y - 1, self._end_x - 1)
+        try:
+            self._pad.refresh(0, 0, self._begin_y, self._begin_x,
+                              self._end_y - 1, self._end_x - 1)
+        except:
+            # do nothing because refresh returns ERR if two refreshes
+            # happen in quick succession
+            pass
+        finally:
+            self.dirty = False
 
     def _play_item(self, list_box, row):
         player = Player.instance()
