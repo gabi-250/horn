@@ -21,10 +21,14 @@ class ListWindow(Widget, EventObserver):
             track_path = Player.instance().current_track.file_path
             if filename == os.path.basename(track_path):
                 self._pad.addstr(index + 1, 0, track.name, curses.A_REVERSE)
+                selected_index = index
             else:
                 self._pad.addstr(index + 1, 0, track.name, curses.A_NORMAL)
+        diff = selected_index - (self._end_y - 1) // 2
+        start_row = 0 if diff < 0 else diff
         try:
-            self._pad.refresh(0, 0, self._begin_y, self._begin_x,
+            self._pad.refresh(start_row, 0,
+                              self._begin_y, self._begin_x,
                               self._end_y - 1, self._end_x - 1)
         except:
             # do nothing because refresh returns ERR if two refreshes
