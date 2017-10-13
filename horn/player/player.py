@@ -1,8 +1,8 @@
 from gi.repository import Gst
 from .track import Track
 from .playerthread import PlayerThread
-from horn.event.event import EventProducer
-from horn.event.event import Event
+from .event import EventProducer
+from .event import Event
 
 
 class Player(EventProducer):

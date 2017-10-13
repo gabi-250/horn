@@ -1,7 +1,7 @@
 import os
 import curses
 from horn.player.player import Player
-from horn.event.event import EventObserver
+from horn.player.event import EventObserver
 from horn.gui.widget import Widget
 
 
@@ -49,7 +49,7 @@ class ListWindow(Widget, EventObserver):
         self._dirty = True
 
     def update(self, event):
-        from horn.event.event import Event
+        from horn.player.event import Event
         if event == Event.play or event == Event.next or \
                 event == Event.new:
             self._dirty = True

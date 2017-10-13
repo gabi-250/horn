@@ -17,7 +17,7 @@ class PlayerThread(Thread):
 
     def run(self):
         from .player import Player
-        from horn.event.event import Event
+        from .event import Event
         while self.keep_running:
             player = Player.instance()
             pos = player.get_current_second()

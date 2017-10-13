@@ -1,6 +1,6 @@
-from horn.event.event import EventObserver
+from horn.player.event import EventObserver
 from horn.player.player import Player
-from horn.event.event import Event
+from horn.player.event import Event
 from horn.gui.playerwindow import PlayerWindow
 import curses
 import os
