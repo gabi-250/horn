@@ -7,13 +7,18 @@ import os
 
 
 class InfoWindow(PlayerWindow, EventObserver):
+    """
+    A simple window that displays the path of the selected media.
 
+    This displays <user>@<hostname> followed by the path of the
+    selected file in the playlist.
+    """
     def __init__(self, win):
         PlayerWindow.__init__(self, win)
         EventObserver.__init__(self, Player.instance())
         self.user_info = '{user}@{hostname}'\
-                             .format(user=os.getenv('USER'),
-                                     hostname=os.getenv('HOSTNAME'))
+            .format(user=os.getenv('USER'),
+                    hostname=os.getenv('HOSTNAME'))
 
     def draw(self):
         self._win.clear()

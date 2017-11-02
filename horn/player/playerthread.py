@@ -10,7 +10,6 @@ class PlayerThread(Thread):
     media finishes playing. It also ensures the slider is moving to indicate
     how much of the media has been played.
     """
-
     def __init__(self):
         Thread.__init__(self)
         self._keep_running = True

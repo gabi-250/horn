@@ -7,12 +7,11 @@ DEFAULT_IMAGE_PATH = './horn/gui/res/img/no_image.png'
 
 class Track(object):
     """
-    This holds data about media files.
+    This holds data about audio files.
 
-    The information about the media file associated with this includes
+    The information about the audio file associated with this includes
     the name, file path, duration and metadata.
     """
-
     def __init__(self, file_path):
         """
         Create a track using data from the specified file.
@@ -34,7 +33,8 @@ class Track(object):
             self._metadata['image'] = tags.get_sample(Gst.TAG_IMAGE)[1]
         else:
             self._metadata['image'] = os.path.abspath(DEFAULT_IMAGE_PATH)
-        self._duration = discoverer_info.get_duration() / Gst.SECOND
+        self._metadata['duration'] = \
+            discoverer_info.get_duration() / Gst.SECOND
 
     def _get_discoverer_info(self, file_path):
         Gst.init()
@@ -42,7 +42,7 @@ class Track(object):
         return discoverer.discover_uri("file://" + file_path)
 
     @property
-    def name(self):
+    def title(self):
         """
         The title of this track if it has one, otherwise the name of the file.
 
@@ -62,18 +62,6 @@ class Track(object):
         return self._file_path
 
     @property
-    def metadata(self):
-        """
-        The metadata associated with this track.
-
-        The metadata is a dictionary mapping tags to values.
-
-        :getter: Return this track's metadata.
-        :type: dict
-        """
-        return self._metadata
-
-    @property
     def duration(self):
         """
         The duration of this track.
@@ -81,4 +69,4 @@ class Track(object):
         :getter: Return this track's duration.
         :type: int
         """
-        return self._duration
+        return self._metadata['duration']

@@ -4,6 +4,11 @@ import curses
 
 
 class PlayerWindow(Widget):
+    """
+    A base class for all the windows.
+
+    This needs to be resizeable.
+    """
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, win):

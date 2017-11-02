@@ -7,7 +7,12 @@ import curses
 
 
 class StatusWindow(PlayerWindow, EventObserver):
+    """
+    A window that displays the state of the player.
 
+    The state can be `playing`, `paused` or `stopped`.
+    This also displays the titles of the selected media and the volume.
+    """
     def __init__(self, win):
         PlayerWindow.__init__(self, win)
         EventObserver.__init__(self, Player.instance())
@@ -22,7 +27,7 @@ class StatusWindow(PlayerWindow, EventObserver):
             state = 'Playing'
         elif player.is_paused():
             state = 'Paused'
-        name = player.current_track.name
+        name = player.current_track.title
         to_display = self.display_format.format(
             state=state,
             title=name,

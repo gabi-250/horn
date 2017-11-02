@@ -10,7 +10,9 @@ import time
 
 
 class MainWindow(PlayerWindow):
-
+    """
+    A window which displays all the other player windows.
+    """
     def __init__(self, win):
         curses.use_default_colors()
         PlayerWindow.__init__(self, win)

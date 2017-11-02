@@ -13,7 +13,6 @@ class Event(Enum):
 
 
 class EventProducer(object):
-
     def __init__(self):
         self._observers = []
 
