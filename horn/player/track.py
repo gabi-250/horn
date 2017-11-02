@@ -1,0 +1,72 @@
+import os.path
+from gi.repository import Gst, GstPbutils
+
+
+DEFAULT_IMAGE_PATH = './horn/gui/res/img/no_image.png'
+
+
+class Track(object):
+    """
+    This holds data about audio files.
+
+    The information about the audio file associated with this includes
+    the name, file path, duration and metadata.
+    """
+    def __init__(self, file_path):
+        """
+        Create a track using data from the specified file.
+
+        Parameters
+        ----------
+        :param file_path: the path of the file out of which to create a track
+        :type file_path: str
+        """
+        self._file_path = os.path.abspath(file_path)
+        self._metadata = {}
+        discoverer_info = self._get_discoverer_info(self._file_path)
+        tags = discoverer_info.get_tags()
+        if tags.get_string(Gst.TAG_TITLE)[0]:
+            self._metadata['title'] = tags.get_string(Gst.TAG_TITLE)[1]
+        else:
+            self._metadata['title'] = os.path.basename(self._file_path)
+        if tags.get_sample(Gst.TAG_IMAGE)[0]:
+            self._metadata['image'] = tags.get_sample(Gst.TAG_IMAGE)[1]
+        else:
+            self._metadata['image'] = os.path.abspath(DEFAULT_IMAGE_PATH)
+        self._metadata['duration'] = \
+            discoverer_info.get_duration() / Gst.SECOND
+
+    def _get_discoverer_info(self, file_path):
+        Gst.init()
+        discoverer = GstPbutils.Discoverer()
+        return discoverer.discover_uri("file://" + file_path)
+
+    @property
+    def title(self):
+        """
+        The title of this track if it has one, otherwise the name of the file.
+
+        :getter: Return this track's title.
+        :type: str
+        """
+        return self._metadata['title']
+
+    @property
+    def file_path(self):
+        """
+        The path of the file corresponding to this track.
+
+        :getter: Return this track's file path.
+        :type: str
+        """
+        return self._file_path
+
+    @property
+    def duration(self):
+        """
+        The duration of this track.
+
+        :getter: Return this track's duration.
+        :type: int
+        """
+        return self._metadata['duration']
