@@ -3,7 +3,6 @@ from horn.player.player import Player
 from horn.player.event import Event
 from horn.gui.playerwindow import PlayerWindow
 import curses
-import os
 
 
 class InfoWindow(PlayerWindow, EventObserver):
@@ -14,11 +13,12 @@ class InfoWindow(PlayerWindow, EventObserver):
     selected file in the playlist.
     """
     def __init__(self, win):
+        import platform
+        import getpass
         PlayerWindow.__init__(self, win)
         EventObserver.__init__(self, Player.instance())
-        self.user_info = '{user}@{hostname}'\
-            .format(user=os.getenv('USER'),
-                    hostname=os.getenv('HOSTNAME'))
+        self.user_info = '{user}@{hostname}'.format(user=getpass.getuser(),
+                                                    hostname=platform.node())
 
     def draw(self):
         self._win.clear()
