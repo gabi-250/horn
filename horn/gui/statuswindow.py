@@ -27,7 +27,7 @@ class StatusWindow(PlayerWindow, EventObserver):
             state = 'Playing'
         elif player.is_paused():
             state = 'Paused'
-        name = player.current_track.title
+        name = player.current_track.title if player.current_track else ''
         to_display = self.display_format.format(
             state=state,
             title=name,

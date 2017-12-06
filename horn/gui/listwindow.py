@@ -19,6 +19,7 @@ class ListWindow(Widget, EventObserver):
         self._end_x = end_x
 
     def draw(self):
+        selected_index = 0
         for index, track in enumerate(Player.instance().track_list):
             filename = os.path.basename(track.file_path)
             track_path = Player.instance().current_track.file_path

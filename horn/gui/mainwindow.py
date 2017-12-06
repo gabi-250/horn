@@ -82,7 +82,8 @@ class MainWindow(PlayerWindow):
 
 def main(stdscr, playlist):
     player = Player(list(set(playlist)))
-    player.instance().play()
+    if playlist:
+        player.instance().play()
     main_window = MainWindow(stdscr)
     main_window.main_loop()
 

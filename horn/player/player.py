@@ -40,12 +40,18 @@ class Player(EventProducer):
                 self.track_list.append(Track(song))
             except:
                 print("Invalid file:", song)
-        self.curr_track_index = -1
+        self._curr_track_index = -1
         self._speed = 1.0
-        if len(self.track_list):
-            self.current_track = self._get_next_media()
+        self._current_track = self._get_next_media()
         self.player_thread = PlayerThread()
         self.playbin = Gst.ElementFactory.make("playbin", "playbin")
+
+    @property
+    def current_track(self):
+        if self._current_track:
+            return self._current_track
+        else:
+            return None
 
     @property
     def shuffle(self):
@@ -86,13 +92,13 @@ class Player(EventProducer):
         :param path: the file path of the song to be played
         :type path: str
         """
-        if len(self.track_list):
+        if self.track_list:
             self.send_event(Event.play)
-            media_uri = 'file://' + self.current_track.file_path
+            media_uri = 'file://{}'.format(self._current_track.file_path)
             if path:
                 self.playbin.set_state(Gst.State.READY)
-                self.curr_track_index = self.get_song_index(path)
-                self.current_track = self.track_list[self.curr_track_index]
+                self._curr_track_index = self.get_song_index(path)
+                self._current_track = self.track_list[self._curr_track_index]
                 self.playbin.set_property('uri', media_uri)
             elif not self.is_paused():
                 self.playbin.set_state(Gst.State.READY)
@@ -104,7 +110,8 @@ class Player(EventProducer):
     def exit(self):
         self.stop()
         self.player_thread.keep_running = False
-        self.player_thread.join()
+        if self.player_thread.is_alive():
+            self.player_thread.join()
 
     def stop(self):
         """
@@ -160,20 +167,20 @@ class Player(EventProducer):
         """
         Play the next media in the playlist.
         """
-        if len(self.track_list):
+        if self.track_list:
             self.send_event(Event.next)
             self.stop()
-            self.current_track = self._get_next_media()
+            self._current_track = self._get_next_media()
             self.play()
 
     def play_previous(self):
         """
         Play the previous media in the playlist.
         """
-        if len(self.track_list):
+        if self.track_list:
             self.send_event(Event.next)
             self.stop()
-            self.current_track = self._get_prev_media()
+            self._current_track = self._get_prev_media()
             self.play()
 
     def skip(self, amount):
@@ -211,33 +218,35 @@ class Player(EventProducer):
         :returns: int
         :note: this returns 0 if there is no media playing when this is called.
         """
-        if self.current_track:
-            return self.current_track.duration
+        if self._current_track:
+            return self._current_track.duration
         else:
             return 0
 
     def _get_next_media(self):
-        if len(self.track_list):
+        if self.track_list:
             track_count = len(self.track_list)
             if self._shuffle:
                 import random
-                self.curr_track_index = random.randint(0, track_count - 1)
+                self._curr_track_index = random.randint(0, track_count - 1)
             else:
-                self.curr_track_index = (self.curr_track_index + 1) % track_count
-            song = self.track_list[self.curr_track_index]
+                self._curr_track_index = \
+                    (self._curr_track_index + 1) % track_count
+            song = self.track_list[self._curr_track_index]
             return song
         else:
             return None
 
     def _get_prev_media(self):
-        if len(self.track_list):
+        if self.track_list:
             track_count = len(self.track_list)
             if self._shuffle:
                 import random
-                self.curr_track_index = random.randint(0, track_count - 1)
+                self._curr_track_index = random.randint(0, track_count - 1)
             else:
-                self.curr_track_index = (track_count + self.curr_track_index - 1) % track_count
-            song = self.track_list[self.curr_track_index]
+                self._curr_track_index = \
+                    (track_count + self._curr_track_index - 1) % track_count
+            song = self.track_list[self._curr_track_index]
             return song
         else:
             return None
@@ -269,6 +278,10 @@ class Player(EventProducer):
         """
         if track_path not in [track.file_path for track in self.track_list]:
             self.track_list.append(Track(track_path))
+            if not self._current_track:
+                self._current_track = self.track_list[0]
+                self._curr_track_index = 0
+                self.play()
             self.send_event(Event.new)
             return True
         return False
