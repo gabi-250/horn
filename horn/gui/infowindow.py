@@ -12,6 +12,8 @@ class InfoWindow(PlayerWindow, EventObserver):
     This displays <user>@<hostname> followed by the path of the
     selected file in the playlist.
     """
+    NO_PLAYLIST_ERR = 'No playlist'
+
     def __init__(self, win):
         import platform
         import getpass
@@ -22,15 +24,21 @@ class InfoWindow(PlayerWindow, EventObserver):
 
     def draw(self):
         self._win.clear()
-        file_path = Player.instance().current_track.file_path
+        player = Player.instance()
+        if player.current_track:
+            file_path = player.current_track.file_path
+        else:
+            file_path = ''
         to_display = '{user_info}: {path}'.format(user_info=self.user_info,
                                                   path=file_path)
         try:
-            self._win.addstr(0, 0, to_display)
+            self._win.addstr(0, 0, to_display, curses.A_NORMAL)
+            if not player.current_track:
+                self._win.addstr(InfoWindow.NO_PLAYLIST_ERR, curses.A_REVERSE)
         except curses.error:
             pass
         self._win.refresh()
 
     def update(self, event):
-        if event == Event.next:
+        if event == Event.play:
             self._dirty = True
